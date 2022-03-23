@@ -58,6 +58,7 @@ python train.py --task srx2 --img_train_path ./data/train/label/ --img_test_path
 
 
 ## Test
+**Pre-trained Models**  [https://pan.baidu.com/s/1Cpaqb2wmIIAfDGu-XxI5NA](https://pan.baidu.com/s/1Cpaqb2wmIIAfDGu-XxI5NA) Extract Code: tgrs
 
 Run **`test.py`** to test RSINet on Colorzation, SRX2, SRX4, SRX8, and Colorization SRX2 tasks.:  
 
