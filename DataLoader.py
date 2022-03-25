@@ -84,15 +84,3 @@ class SR_BGR_Data_Loader():
                                              num_workers=0, drop_last=True)
         return loader
 
-# if __name__=="__main__":
-#     train_loader = SR_BGR_Data_Loader(img_path='./data/train/label/', batch_size=20, normalzero2one=True, has_name=False, shuf=False, sr_factor=8).loader()
-#     for step, (img_bgr_hr, img_bgr_lr) in enumerate(train_loader):
-#         print(img_bgr_hr.shape)
-#         print(img_bgr_lr.shape)
-#         exit(0)
-#
-#     train_loader = Color_BGR_Data_Loader(img_path='./data/train/label/', batch_size=20, normalzero2one=True, has_name=False, shuf=False).loader()
-#     for step, (img_bgr, img_gray) in enumerate(train_loader):
-#         print(img_bgr.shape)
-#         print(img_bgr.shape)
-#         exit(0)
