@@ -10,7 +10,7 @@ from tqdm import tqdm
 from torch.backends import cudnn
 
 import fjn_util
-from DataLoader import Color_BGR_Data_Loader, SR_BGR_Data_Loader
+from DataLoader import Color_BGR_Data_Loader, SR_BGR_Data_Loader, COLOR_SR_BGR_Data_Loader
 from model import net
 
 warnings.filterwarnings('ignore')
@@ -40,12 +40,11 @@ def main(config):
 
     # 1. dataloader
     if config.task == 'color':
-        test_data_loader = Color_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1,
-                                                 normalzero2one=config.normalization, shuf=False, has_name=True).loader()
+        test_data_loader = Color_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1, normalzero2one=config.normalization, shuf=False, has_name=True).loader()
+    elif config.task == 'colorx2':
+        test_data_loader = COLOR_SR_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1, normalzero2one=config.normalization, shuf=False, has_name=True).loader()
     else:
-        test_data_loader = SR_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1,
-                                              normalzero2one=config.normalization, shuf=False,
-                                              sr_factor=scale, has_name=True).loader()
+        test_data_loader = SR_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1, normalzero2one=config.normalization, shuf=False, sr_factor=scale, has_name=True).loader()
 
     # 2 model and counter
     model = net.Kong(scale=scale).to(config.device)
