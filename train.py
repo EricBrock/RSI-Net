@@ -59,7 +59,7 @@ def main(config):
     if config.task == 'color':
         train_data_loader = Color_BGR_Data_Loader(img_path=config.img_train_path, batch_size=config.batch_size, normalzero2one=config.normalization, shuf=True).loader()
     elif config.task == 'colorx2':
-        test_data_loader = COLOR_SR_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1, normalzero2one=config.normalization, shuf=False, has_name=True).loader()
+        test_data_loader = COLOR_SR_BGR_Data_Loader(img_path=config.img_train_path, batch_size=config.batch_size, normalzero2one=config.normalization, shuf=True, sr_factor=2).loader()
     else:
         train_data_loader = SR_BGR_Data_Loader(img_path=config.img_train_path, batch_size=config.batch_size, normalzero2one=config.normalization, shuf=True, sr_factor=scale).loader()
 
