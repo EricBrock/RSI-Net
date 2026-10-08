@@ -10,7 +10,7 @@ from tqdm import tqdm
 from torch.backends import cudnn
 
 import fjn_util
-from DataLoader import Color_BGR_Data_Loader, SR_BGR_Data_Loader
+from DataLoader import Color_BGR_Data_Loader, SR_BGR_Data_Loader, COLOR_SR_BGR_Data_Loader
 from model import net
 
 warnings.filterwarnings('ignore')
@@ -57,18 +57,16 @@ def main(config):
 
     # 1.1 dataloader
     if config.task == 'color':
-        train_data_loader = Color_BGR_Data_Loader(img_path=config.img_train_path, batch_size=config.batch_size,
-                                                  normalzero2one=config.normalization, shuf=True).loader()
+        train_data_loader = Color_BGR_Data_Loader(img_path=config.img_train_path, batch_size=config.batch_size, normalzero2one=config.normalization, shuf=True).loader()
+    elif config.task == 'colorx2':
+        test_data_loader = COLOR_SR_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1, normalzero2one=config.normalization, shuf=False, has_name=True).loader()
     else:
-        train_data_loader = SR_BGR_Data_Loader(img_path=config.img_train_path, batch_size=config.batch_size,
-                                               normalzero2one=config.normalization, shuf=True,
-                                               sr_factor=scale).loader()
+        train_data_loader = SR_BGR_Data_Loader(img_path=config.img_train_path, batch_size=config.batch_size, normalzero2one=config.normalization, shuf=True, sr_factor=scale).loader()
 
     # 1.2 model
     train_model = net.Kong(scale=scale).to(config.device)
     loss_fun = nn.L1Loss()
-    optimizer = torch.optim.Adam(train_model.parameters(), lr=1e-4, betas=(0.9, 0.999), eps=1e-08, weight_decay=0,
-                                 amsgrad=False)
+    optimizer = torch.optim.Adam(train_model.parameters(), lr=1e-4, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=False)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config.train_all_epoch)
 
     # 1.3 statistics counter
@@ -133,16 +131,12 @@ def test(config, epoch, best_psnr, model, training=True):
 
     # 1. dataloader
     if config.task == 'color':
-        test_data_loader = Color_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1,
-                                                 normalzero2one=config.normalization, shuf=True, has_name=True).loader()
+        test_data_loader = Color_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1, normalzero2one=config.normalization, shuf=True, has_name=True).loader()
     else:
-        test_data_loader = SR_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1,
-                                              normalzero2one=config.normalization, shuf=True,
-                                              sr_factor=scale, has_name=True).loader()
+        test_data_loader = SR_BGR_Data_Loader(img_path=config.img_test_path, batch_size=1, normalzero2one=config.normalization, shuf=True, sr_factor=scale, has_name=True).loader()
 
     # 2 counter
-    test_counter = fjn_util.Model_Statistics(config.log_path,
-                                             ['Test_psnr', 'Test_ssim', 'Test_mae', 'Test_mse', 'Test_pearsonr_corr'])
+    test_counter = fjn_util.Model_Statistics(config.log_path, ['Test_psnr', 'Test_ssim', 'Test_mae', 'Test_mse', 'Test_pearsonr_corr'])
 
     model.eval()
     with tqdm(total=len(test_data_loader), ascii=True) as t:
@@ -219,8 +213,7 @@ if __name__ == "__main__":
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
 
-    fjn_util.make_folder(config.train_pkl_path, config.best_pkl_path, config.log_path, config.process_path,
-                         config.result_path)
+    fjn_util.make_folder(config.train_pkl_path, config.best_pkl_path, config.log_path, config.process_path, config.result_path)
 
     assert config.task in ['color', 'colorx2', 'srx2', 'srx4', 'srx8'], 'wrong task'
     main(config)
